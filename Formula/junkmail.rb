@@ -2,18 +2,18 @@
 class Junkmail < Formula
   desc "AI-triaged work inbox built on T3 Code"
   homepage "https://github.com/komcdo/junkmail"
-  version "0.1.4"
+  version "0.1.5"
   license "MIT"
 
   depends_on :macos
 
   on_arm do
-    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.4/t3-0.1.4-darwin-arm64.tar.gz"
-    sha256 "7b23093f03e55ed1c47482b9531f335c8f71b5a53985f40f90aea5eda02da2fb"
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.5/t3-0.1.5-darwin-arm64.tar.gz"
+    sha256 "aea790629bf2cfd0ef775326c95a58a6c20e0e485a08ef620bec14e0aadb8162"
   end
   on_intel do
-    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.4/t3-0.1.4-darwin-x64.tar.gz"
-    sha256 "47cef049f0783d1af2cae8b0d345bf60bc0b4032ef7378790c6af9b0d0075f72"
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.5/t3-0.1.5-darwin-x64.tar.gz"
+    sha256 "f8a3c7c5d6e1f5981d33bc7e1aaa1da378ce0d96ebf5f10792ef5671e21931ab"
     # Intel archives carry the server bundle instead of a single executable; it runs on Node.
     resource "node" do
       url "https://nodejs.org/dist/v24.22.0/node-v24.22.0-darwin-x64.tar.gz"
@@ -36,8 +36,15 @@ class Junkmail < Formula
       #!/bin/bash
       # Own data folder, so an official T3 Code install on this machine is never touched.
       export T3CODE_HOME="${JUNKMAIL_HOME:-$HOME/.junkmail}"
+      # Web mode otherwise turns the launch folder into a project and opens a thread there; for
+      # the service that folder is /, and a disabled default provider aborts startup.
+      export T3CODE_AUTO_BOOTSTRAP_PROJECT_FROM_CWD="${T3CODE_AUTO_BOOTSTRAP_PROJECT_FROM_CWD:-false}"
       # launchd starts services with a bare PATH; agent CLIs usually live in these.
       export PATH="$HOME/.local/bin:#{HOMEBREW_PREFIX}/bin:$PATH"
+      if [ "${1:-}" = "import-t3" ]; then
+        shift
+        exec /bin/bash "#{libexec}/import-t3.sh" "$@"
+      fi
       if [ "${1:-}" = "open" ]; then
         url="$(#{server_command} pair --ttl 15m 2>&1 | grep -oE 'https?://[^[:space:]]+#token=[A-Za-z0-9]+' | head -1)"
         if [ -z "$url" ]; then
@@ -69,6 +76,8 @@ class Junkmail < Formula
         junkmail
 
       Data lives in ~/.junkmail (set JUNKMAIL_HOME to change it).
+      Coming from T3 Code? Bring your threads over before the first start:
+        junkmail import-t3
       Sign in to the agent CLIs you use (Claude Code, Codex) so threads can run.
     EOS
   end
