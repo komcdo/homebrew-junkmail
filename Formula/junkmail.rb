@@ -2,18 +2,18 @@
 class Junkmail < Formula
   desc "AI-triaged work inbox built on T3 Code"
   homepage "https://github.com/komcdo/junkmail"
-  version "0.1.5"
+  version "0.1.6"
   license "MIT"
 
   depends_on :macos
 
   on_arm do
-    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.5/t3-0.1.5-darwin-arm64.tar.gz"
-    sha256 "aea790629bf2cfd0ef775326c95a58a6c20e0e485a08ef620bec14e0aadb8162"
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.6/t3-0.1.6-darwin-arm64.tar.gz"
+    sha256 "a99a826a708d2c94b69cb060be67466de5bb2dec9784ce893687575e8b9503ed"
   end
   on_intel do
-    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.5/t3-0.1.5-darwin-x64.tar.gz"
-    sha256 "f8a3c7c5d6e1f5981d33bc7e1aaa1da378ce0d96ebf5f10792ef5671e21931ab"
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.6/t3-0.1.6-darwin-x64.tar.gz"
+    sha256 "7568091d0962a12d5042635bf04ea2ef43c084be5379509c35c86a4e99d8755f"
     # Intel archives carry the server bundle instead of a single executable; it runs on Node.
     resource "node" do
       url "https://nodejs.org/dist/v24.22.0/node-v24.22.0-darwin-x64.tar.gz"
