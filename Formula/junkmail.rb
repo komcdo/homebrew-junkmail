@@ -2,13 +2,29 @@
 class Junkmail < Formula
   desc "AI-triaged work inbox built on T3 Code"
   homepage "https://github.com/komcdo/junkmail"
-  url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.0/t3-0.1.0-darwin-arm64.tar.gz"
-  version "0.1.0"
-  sha256 "6ffc07003359dce0c96acf7773e729408436273e53e9f5c8d303396ea4331a6d"
+  version "0.1.4"
   license "MIT"
 
-  depends_on arch: :arm64
   depends_on :macos
+
+  on_arm do
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.4/t3-0.1.4-darwin-arm64.tar.gz"
+    sha256 "7b23093f03e55ed1c47482b9531f335c8f71b5a53985f40f90aea5eda02da2fb"
+  end
+  on_intel do
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.4/t3-0.1.4-darwin-x64.tar.gz"
+    sha256 "47cef049f0783d1af2cae8b0d345bf60bc0b4032ef7378790c6af9b0d0075f72"
+    # Intel archives carry the server bundle instead of a single executable; it runs on Node.
+    depends_on "node"
+  end
+
+  def server_command
+    if Hardware::CPU.intel?
+      %Q["#{Formula["node"].opt_bin}/node" "#{libexec}/bin.mjs"]
+    else
+      %Q["#{libexec}/t3"]
+    end
+  end
 
   def install
     libexec.install Dir["*"]
@@ -19,7 +35,7 @@ class Junkmail < Formula
       # launchd starts services with a bare PATH; agent CLIs usually live in these.
       export PATH="$HOME/.local/bin:#{HOMEBREW_PREFIX}/bin:$PATH"
       if [ "${1:-}" = "open" ]; then
-        url="$("#{libexec}/t3" pair --ttl 15m 2>&1 | grep -oE 'https?://[^[:space:]]+#token=[A-Za-z0-9]+' | head -1)"
+        url="$(#{server_command} pair --ttl 15m 2>&1 | grep -oE 'https?://[^[:space:]]+#token=[A-Za-z0-9]+' | head -1)"
         if [ -z "$url" ]; then
           echo "junkmail is not running. Start it with: brew services start junkmail" >&2
           exit 1
@@ -27,7 +43,7 @@ class Junkmail < Formula
         echo "$url"
         exec open "$url"
       fi
-      exec "#{libexec}/t3" "$@"
+      exec #{server_command} "$@"
     SH
   end
 
