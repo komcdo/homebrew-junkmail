@@ -15,12 +15,15 @@ class Junkmail < Formula
     url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.4/t3-0.1.4-darwin-x64.tar.gz"
     sha256 "47cef049f0783d1af2cae8b0d345bf60bc0b4032ef7378790c6af9b0d0075f72"
     # Intel archives carry the server bundle instead of a single executable; it runs on Node.
-    depends_on "node"
+    resource "node" do
+      url "https://nodejs.org/dist/v24.22.0/node-v24.22.0-darwin-x64.tar.gz"
+      sha256 "495e3f273c645f3c4677d438304cdfc701729ea5dec5728f5c8e76a2dece4b91"
+    end
   end
 
   def server_command
     if Hardware::CPU.intel?
-      %Q["#{Formula["node"].opt_bin}/node" "#{libexec}/bin.mjs"]
+      %Q["#{libexec}/node/bin/node" "#{libexec}/bin.mjs"]
     else
       %Q["#{libexec}/t3"]
     end
@@ -28,6 +31,7 @@ class Junkmail < Formula
 
   def install
     libexec.install Dir["*"]
+    resource("node").stage { (libexec/"node").install Dir["*"] } if Hardware::CPU.intel?
     (bin/"junkmail").write <<~SH
       #!/bin/bash
       # Own data folder, so an official T3 Code install on this machine is never touched.
