@@ -2,18 +2,18 @@
 class Junkmail < Formula
   desc "AI-triaged work inbox built on T3 Code"
   homepage "https://github.com/komcdo/junkmail"
-  version "0.1.8"
+  version "0.1.9"
   license "MIT"
 
   depends_on :macos
 
   on_arm do
-    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.8/t3-0.1.8-darwin-arm64.tar.gz"
-    sha256 "604ba1c0fc05857033ca8e60d34debb704cb03a9459043711a79022057119cd7"
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.9/t3-0.1.9-darwin-arm64.tar.gz"
+    sha256 "d52757745fccb7f28ee2cbbb30e68d92542b810c6780f5d3aa8071efcd2dcdfe"
   end
   on_intel do
-    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.8/t3-0.1.8-darwin-x64.tar.gz"
-    sha256 "b6f665c7fd2bdae4d132991ad67e65308e188327b77f459e09d4246cb3ce107d"
+    url "https://github.com/komcdo/junkmail/releases/download/junkmail-v0.1.9/t3-0.1.9-darwin-x64.tar.gz"
+    sha256 "926c604fe6a6676d81db557b0d8a2542b05ab1903d162da3ccd2b9d26427b02a"
     # Intel archives carry the server bundle instead of a single executable; it runs on Node.
     resource "node" do
       url "https://nodejs.org/dist/v24.22.0/node-v24.22.0-darwin-x64.tar.gz"
@@ -78,6 +78,8 @@ class Junkmail < Formula
       Data lives in ~/.junkmail (set JUNKMAIL_HOME to change it).
       Coming from T3 Code? Bring your threads over before the first start:
         junkmail import-t3
+      Already started? Bring over just the saved remote connections:
+        junkmail import-t3 --connections
       Sign in to the agent CLIs you use (Claude Code, Codex) so threads can run.
     EOS
   end
